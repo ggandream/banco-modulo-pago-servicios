@@ -5,7 +5,7 @@ Este proyecto consiste en desarrollar un modulo de sistema web para el pago de s
 
 El sistema será utilizado por cuentahabientes y permitirá realizar el pago del servicio de luz y agua.
 
-El objetivo es [resultado de negocio].
+El objetivo es que los cuentahabientes puedan realizar pago de servicio de luz y servicio de agua.
 
 ## 2. Objetivos
 
