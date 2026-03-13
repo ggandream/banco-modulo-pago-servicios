@@ -1,0 +1,81 @@
+.header {
+  background: var(--appshell-bg);
+  width: 100%;
+  justify-content: flex-end;
+
+  @media (min-width: 768px) {
+    justify-content: space-between;
+  }
+}
+
+/* =====================
+   BOTÓN DE USUARIO
+   ===================== */
+.userButton {
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--mantine-color-gray-1);
+    color: var(--mantine-color-dark-6);
+  }
+}
+
+.userInfo {
+  text-align: left;
+}
+
+.chevron {
+  color: var(--mantine-color-gray-5);
+  transition: transform 0.2s ease;
+}
+
+.userButton:hover .chevron {
+  color: var(--mantine-color-gray-7);
+}
+
+/* =====================
+   NOTIFICACIONES
+   ===================== */
+.notificationItem {
+  padding: 12px;
+  color: light-dark(var(--mantine-color-dark-8), var(--mantine-color-dark-0));
+}
+
+.notificationItem[data-unread] {
+  background-color: var(--mantine-color-violet-0);
+  color: light-dark(var(--mantine-color-dark-8), var(--mantine-color-violet-8));
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  border-radius: 50%;
+  background-color: var(--mantine-color-violet-6);
+  margin-top: 4px;
+}
+
+/* =====================
+   RESPONSIVE
+   ===================== */
+@media (max-width: 768px) {
+  .userInfo {
+    display: none;
+  }
+  
+  .chevron {
+    display: none;
+  }
+  
+  .search input {
+    width: 160px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .search {
+    display: none;
+  }
+}

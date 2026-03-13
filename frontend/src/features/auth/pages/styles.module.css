@@ -1,0 +1,36 @@
+.mainContainer {
+  position: relative;
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-image: url("src/assets/images/building-landscape.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.container {
+  z-index: 1;
+}
+
+.paper {
+  backdrop-filter: blur(12px);
+  -webkit-background-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(24, 100, 171, 0.15);
+  min-width: 100%;
+  min-width: 360px;
+
+  @media (min-width: 768px) {
+    min-width: 440px;
+  }
+}
+
+.button {
+  box-shadow: 0 4px 12px rgba(34, 139, 230, 0.3);
+}
