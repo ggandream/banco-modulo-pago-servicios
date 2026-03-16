@@ -1,0 +1,112 @@
+---
+title: Modelo Entidad-Relación
+---
+erDiagram
+    Rol ||--o{ Usuario : tiene
+    Rol {
+        int id PK
+        string nombre UK
+        boolean estado
+        datetime fechaCreacion
+    }
+
+    Usuario ||--o{ CuentaBancaria : posee
+    Usuario ||--o{ Pago : realiza
+    Usuario ||--o{ HistorialPagos : registra
+    Usuario {
+        int id PK
+        string nombreCompleto
+        string nombreUsuario UK
+        string correo UK
+        string passwordHash
+        int rolId FK
+        boolean estado
+        datetime fechaCreacion
+    }
+
+    CuentaBancaria ||--o{ Pago : fondea
+    CuentaBancaria {
+        int id PK
+        int usuarioId FK
+        string numeroCuenta UK
+        decimal saldo
+        string tipoCuenta
+        boolean estado
+        datetime fechaCreacion
+    }
+
+    TipoServicio ||--o{ EmpresaServicio : clasifica
+    TipoServicio ||--o{ HistorialPagos : categoriza
+    TipoServicio {
+        int id PK
+        string nombre UK
+        boolean estado
+        datetime fechaCreacion
+    }
+
+    EmpresaServicio ||--o{ ContadorServicio : administra
+    EmpresaServicio ||--o{ Pago : recibe
+    EmpresaServicio ||--o{ TarifasServicio : define
+    EmpresaServicio ||--o{ HistorialPagos : asocia
+    EmpresaServicio {
+        int id PK
+        string nombre
+        int tipoServicioId FK
+        decimal tarifaMensual
+        boolean estado
+        datetime fechaCreacion
+    }
+
+    ContadorServicio ||--o{ HistorialPagos : vincula
+    ContadorServicio {
+        int id PK
+        string numeroContador UK
+        int empresaId FK
+        string alias
+        boolean estado
+        datetime fechaCreacion
+    }
+
+    Pago ||--|| Comprobante : genera
+    Pago ||--o{ HistorialPagos : produce
+    Pago {
+        int id PK
+        int usuarioId FK
+        int empresaId FK
+        string numeroContador
+        int cuentaBancariaId FK
+        decimal montoPagado
+        int mesCorrespondiente
+        int anioCorrespondiente
+        string estado
+        datetime fechaPago
+    }
+
+    Comprobante {
+        int id PK
+        int pagoId FK_UK
+        string numeroComprobante UK
+        datetime fechaEmision
+        decimal monto
+        string empresa
+        string numeroContador
+    }
+
+    TarifasServicio {
+        int id PK
+        int empresaId FK
+        decimal montoMensual
+        date fechaInicioVigencia
+        date fechaFinVigencia
+        boolean estado
+    }
+
+    HistorialPagos {
+        int id PK
+        int pagoId FK
+        int empresaId FK
+        int usuarioId FK
+        int contadorId FK
+        int tipoServicioId FK
+        datetime fechaEvento
+    }

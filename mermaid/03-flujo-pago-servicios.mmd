@@ -1,0 +1,52 @@
+---
+title: Flujo de Pago de Servicios
+---
+sequenceDiagram
+    actor U as Cuentahabiente
+    participant FE as Frontend<br/>(Wizard Stepper)
+    participant BE as Backend<br/>(PagosService)
+    participant DB as PostgreSQL
+
+    Note over U,FE: Paso 1 - Seleccionar tipo de servicio
+    U->>FE: Selecciona Agua o Electricidad
+    FE->>BE: GET /api/servicios/tipos
+    BE-->>FE: Lista de tipos de servicio
+
+    Note over U,FE: Paso 2 - Seleccionar empresa
+    U->>FE: Selecciona empresa proveedora
+    FE->>BE: GET /api/servicios/empresas?tipoId=X
+    BE-->>FE: Lista de empresas
+
+    Note over U,FE: Paso 3 - Formulario de pago
+    U->>FE: Ingresa número de contador<br/>y selecciona cuenta bancaria
+    FE->>BE: GET /api/pagos/deuda<br/>?empresaId=X&numeroContador=CTR-XXX
+    BE->>DB: Consultar pagos aprobados<br/>del contador
+    DB-->>BE: Pagos existentes
+    BE->>BE: Calcular meses pendientes<br/>(Ene 2026 → mes actual)
+    BE-->>FE: {mesesPendientes, tarifaMensual, montoTotal}
+    FE-->>U: Mostrar deuda calculada
+
+    Note over U,FE: Paso 4 - Confirmación
+    U->>FE: Confirma el pago
+    FE->>BE: POST /api/pagos<br/>{empresaId, numeroContador,<br/>cuentaBancariaId, mesesAPagar}
+
+    Note over BE,DB: Transacción atómica
+    BE->>DB: Verificar cuenta pertenece al usuario
+    BE->>DB: Verificar saldo suficiente
+    BE->>DB: Verificar no existan pagos duplicados
+
+    alt Validación falla
+        BE-->>FE: 400/403 Error de validación
+        FE-->>U: Mostrar error
+    else Validación exitosa
+        BE->>DB: Debitar cuenta bancaria
+        loop Por cada mes a pagar
+            BE->>DB: Crear registro de Pago
+            BE->>DB: Crear Comprobante
+            BE->>DB: Registrar HistorialPagos
+        end
+        BE-->>FE: {mensaje, pagos, montoTotal, saldoRestante}
+
+        Note over U,FE: Paso 5 - Comprobante
+        FE-->>U: Mostrar comprobante en pantalla
+    end

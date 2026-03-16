@@ -1,0 +1,35 @@
+---
+title: Flujo de Autenticación
+---
+sequenceDiagram
+    actor U as Usuario
+    participant FE as Frontend<br/>(React)
+    participant BE as Backend<br/>(NestJS)
+    participant DB as PostgreSQL
+
+    U->>FE: Ingresa username y password
+    FE->>BE: POST /api/auth/login<br/>{username, password}
+    BE->>DB: Buscar usuario por nombreUsuario<br/>(include rol)
+
+    alt Usuario no encontrado
+        DB-->>BE: null
+        BE-->>FE: 401 Credenciales inválidas
+        FE-->>U: Mostrar error
+    else Usuario desactivado
+        DB-->>BE: usuario.estado = false
+        BE-->>FE: 401 Usuario desactivado
+        FE-->>U: Mostrar error
+    else Usuario encontrado
+        DB-->>BE: Usuario con passwordHash
+        BE->>BE: bcrypt.compare(password, passwordHash)
+
+        alt Password incorrecto
+            BE-->>FE: 401 Credenciales inválidas
+            FE-->>U: Mostrar error
+        else Password correcto
+            BE->>BE: Generar JWT<br/>{sub, username, role}
+            BE-->>FE: {accessToken, user}
+            FE->>FE: Guardar token y user<br/>en localStorage (Zustand)
+            FE-->>U: Redirigir al Dashboard
+        end
+    end
