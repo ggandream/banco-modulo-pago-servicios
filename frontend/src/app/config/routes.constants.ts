@@ -1,5 +1,5 @@
 /**
- * Constantes de rutas de navegación del frontend
+ * Constantes de rutas de navegacion del frontend
  * Esta es la fuente de verdad para todas las rutas del SPA
  */
 
@@ -12,14 +12,27 @@ export const ROUTES = {
 } as const;
 
 // ============================================================================
-// RUTAS DE NAVEGACIÓN POR MÓDULO
+// RUTAS DE NAVEGACION POR MODULO
 // ============================================================================
 export const DASHBOARD_ROUTES = {
-  // ---------------------------------------------------------------------------
-  // Dashboard
-  // ---------------------------------------------------------------------------
   DASHBOARD: {
     ROOT: '/dashboard',
+  },
+  PAGOS: {
+    ROOT: '/dashboard/pagos',
+    NUEVO: '/dashboard/pagos/nuevo',
+    HISTORIAL: '/dashboard/pagos/historial',
+  },
+  ADMIN: {
+    ROOT: '/dashboard/admin',
+    USUARIOS: '/dashboard/admin/usuarios',
+  },
+  EMPRESA: {
+    ROOT: '/dashboard/empresa',
+    PAGOS: '/dashboard/empresa/pagos',
+  },
+  PERFIL: {
+    ROOT: '/dashboard/perfil',
   },
 } as const;
 
