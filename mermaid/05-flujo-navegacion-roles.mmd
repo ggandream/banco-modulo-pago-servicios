@@ -1,0 +1,33 @@
+---
+title: Flujo de Navegación por Rol
+---
+flowchart TD
+    Login[Login<br/>POST /api/auth/login]
+    Login -->|JWT + user.role| AuthGuard{Auth Guard<br/>Validar JWT}
+    AuthGuard -->|Token inválido| Login
+
+    AuthGuard -->|Administrador| AdminDash[Dashboard Admin]
+    AuthGuard -->|Cuentahabiente| UserDash[Dashboard Cuentahabiente]
+    AuthGuard -->|Empresa de Servicios| EmpDash[Dashboard Empresa]
+
+    subgraph Admin["Rol: Administrador"]
+        AdminDash --> AdminStats[Stats globales<br/>Total usuarios, pagos del mes,<br/>monto recaudado]
+        AdminDash --> GestionUsuarios[Gestión de Usuarios<br/>CRUD completo]
+        GestionUsuarios --> CrearUsuario[Crear usuario]
+        GestionUsuarios --> EditarUsuario[Editar usuario]
+        GestionUsuarios --> DesactivarUsuario[Desactivar usuario]
+    end
+
+    subgraph User["Rol: Cuentahabiente"]
+        UserDash --> UserStats[Stats personales<br/>Saldo total, pagos del mes]
+        UserDash --> NuevoPago[Nuevo Pago<br/>Wizard Stepper]
+        UserDash --> Historial[Historial de Pagos<br/>DataTable]
+        UserDash --> Perfil[Perfil<br/>Info personal + cuentas]
+        NuevoPago --> Comprobante[Ver Comprobante]
+        Historial --> Comprobante
+    end
+
+    subgraph Emp["Rol: Empresa de Servicios"]
+        EmpDash --> EmpStats[Stats empresa<br/>Total pagos, monto recaudado]
+        EmpDash --> ConsultaPagos[Consulta de Pagos<br/>Por número de contador]
+    end

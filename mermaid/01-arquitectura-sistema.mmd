@@ -1,0 +1,40 @@
+---
+title: Arquitectura del Sistema
+---
+graph TB
+    subgraph Frontend["Frontend (React + Mantine + Vite)"]
+        UI[UI Components]
+        AuthStore[Auth Store - Zustand]
+        Pages[Pages & Routes]
+        UI --> AuthStore
+        UI --> Pages
+    end
+
+    subgraph Backend["Backend (NestJS)"]
+        AuthModule[AuthModule<br/>POST /api/auth/login]
+        UsersModule[UsersModule<br/>CRUD /api/users]
+        CuentasModule[CuentasModule<br/>GET /api/cuentas]
+        ServiciosModule[ServiciosModule<br/>GET /api/servicios/*]
+        PagosModule[PagosModule<br/>/api/pagos/*]
+        JWTGuard[JWT Auth Guard]
+        ValidationPipe[Validation Pipe]
+    end
+
+    subgraph Database["Base de Datos (PostgreSQL)"]
+        Prisma[Prisma ORM]
+        PG[(PostgreSQL<br/>Docker)]
+        Prisma --> PG
+    end
+
+    Frontend -- "HTTP REST + JWT" --> Backend
+    AuthModule --> Prisma
+    UsersModule --> JWTGuard
+    UsersModule --> Prisma
+    CuentasModule --> JWTGuard
+    CuentasModule --> Prisma
+    ServiciosModule --> JWTGuard
+    ServiciosModule --> Prisma
+    PagosModule --> JWTGuard
+    PagosModule --> Prisma
+    ValidationPipe -. "Valida DTOs" .-> AuthModule
+    ValidationPipe -. "Valida DTOs" .-> PagosModule

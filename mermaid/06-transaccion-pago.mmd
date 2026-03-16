@@ -1,0 +1,38 @@
+---
+title: Transacción de Pago (detalle interno)
+---
+flowchart TD
+    Start([POST /api/pagos]) --> ValidarCuenta{Cuenta pertenece<br/>al usuario?}
+
+    ValidarCuenta -->|No| Error403[403 Cuenta no pertenece<br/>al usuario]
+    ValidarCuenta -->|Sí| BuscarEmpresa{Empresa<br/>existe?}
+
+    BuscarEmpresa -->|No| Error404[404 Empresa<br/>no encontrada]
+    BuscarEmpresa -->|Sí| CalcMonto[Calcular monto total<br/>tarifa x cantidad de meses]
+
+    CalcMonto --> ValidarSaldo{Saldo<br/>suficiente?}
+
+    ValidarSaldo -->|No| Error400a["400 Saldo insuficiente<br/>Saldo: Q___ vs Requerido: Q___"]
+    ValidarSaldo -->|Sí| ValidarDuplicados{Pagos<br/>duplicados?}
+
+    ValidarDuplicados -->|Sí| Error400b["400 Ya existe pago<br/>para mes/año del contador"]
+    ValidarDuplicados -->|No| InicioTx
+
+    subgraph TX ["Transacción Atómica ($transaction)"]
+        InicioTx[Iniciar transacción] --> Debitar[Debitar cuenta bancaria<br/>saldo = saldo - montoTotal]
+        Debitar --> LoopStart{Más meses<br/>por pagar?}
+        LoopStart -->|Sí| CrearPago[Crear registro Pago<br/>estado: aprobado]
+        CrearPago --> CrearComp[Crear Comprobante<br/>COMP-timestamp-pagoId]
+        CrearComp --> CrearHist[Crear HistorialPagos<br/>empresa, usuario, contador, tipoServicio]
+        CrearHist --> LoopStart
+        LoopStart -->|No| FinTx[Commit transacción]
+    end
+
+    FinTx --> Response["200 OK<br/>{mensaje, pagos[], montoTotal, saldoRestante}"]
+
+    style TX fill:#e8f5e9,stroke:#2e7d32
+    style Error403 fill:#ffebee,stroke:#c62828
+    style Error404 fill:#ffebee,stroke:#c62828
+    style Error400a fill:#ffebee,stroke:#c62828
+    style Error400b fill:#ffebee,stroke:#c62828
+    style Response fill:#e3f2fd,stroke:#1565c0

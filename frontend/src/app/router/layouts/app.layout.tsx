@@ -1,13 +1,24 @@
 import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import DashboardHeader from './dashboard/Header';
 import styles from './styles.module.css';
 import { DashboardNavbar } from './dashboard/Navbar';
 import { SpotlightProvider } from '@/app/providers/Spotlight/spotlight.provider';
+import { useAuthStore } from '@/features/auth/stores/auth.store';
+import { useEffect } from 'react';
 
 export function AppLayout() {
   const [opened, { toggle }] = useDisclosure();
+  const { isAuthenticated, initialize } = useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  if (!isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
 
   return (
     <>
