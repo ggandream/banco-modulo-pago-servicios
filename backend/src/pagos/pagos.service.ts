@@ -1,11 +1,23 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { MetricsService } from '../metrics/metrics.service';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class PagosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private metrics: MetricsService,
+  ) {}
 
   async calcularDeuda(empresaId: number, numeroContador: string) {
     const empresa = await this.prisma.empresaServicio.findUnique({
@@ -31,7 +43,9 @@ export class PagosService {
     });
 
     const mesesPagados = new Set(
-      pagosAprobados.map((p) => `${p.anioCorrespondiente}-${p.mesCorrespondiente}`),
+      pagosAprobados.map(
+        (p) => `${p.anioCorrespondiente}-${p.mesCorrespondiente}`,
+      ),
     );
 
     // Calcular meses pendientes (desde enero 2026 hasta el mes actual)
@@ -68,13 +82,18 @@ export class PagosService {
   }
 
   async crearPago(usuarioId: number, dto: CreatePagoDto) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const paymentTimer = this.metrics.paymentDuration.startTimer();
+
     // Verificar que la cuenta pertenece al usuario
     const cuenta = await this.prisma.cuentaBancaria.findFirst({
       where: { id: dto.cuentaBancariaId, usuarioId, estado: true },
     });
 
     if (!cuenta) {
-      throw new ForbiddenException('Cuenta bancaria no encontrada o no pertenece al usuario');
+      throw new ForbiddenException(
+        'Cuenta bancaria no encontrada o no pertenece al usuario',
+      );
     }
 
     // Obtener empresa y tarifa
@@ -174,6 +193,11 @@ export class PagosService {
 
       return pagosCreados;
     });
+
+    // Record business metrics
+    paymentTimer({ status: 'success' });
+    this.metrics.paymentTotal.labels('success').inc(dto.mesesAPagar.length);
+    this.metrics.paymentAmountTotal.inc(montoTotal);
 
     return {
       mensaje: `Pago exitoso. Se procesaron ${dto.mesesAPagar.length} mes(es) por un total de Q${montoTotal.toFixed(2)}`,
@@ -280,7 +304,10 @@ export class PagosService {
       },
     });
 
-    const montoMes = pagosDelMes.reduce((acc, p) => acc + Number(p.montoPagado), 0);
+    const montoMes = pagosDelMes.reduce(
+      (acc, p) => acc + Number(p.montoPagado),
+      0,
+    );
 
     return {
       totalUsuarios,
@@ -305,9 +332,14 @@ export class PagosService {
     const anioActual = new Date().getFullYear();
 
     const pagosDelMes = pagos.filter(
-      (p) => p.mesCorrespondiente === mesActual && p.anioCorrespondiente === anioActual,
+      (p) =>
+        p.mesCorrespondiente === mesActual &&
+        p.anioCorrespondiente === anioActual,
     );
-    const montoMes = pagosDelMes.reduce((acc, p) => acc + Number(p.montoPagado), 0);
+    const montoMes = pagosDelMes.reduce(
+      (acc, p) => acc + Number(p.montoPagado),
+      0,
+    );
 
     return {
       totalPagos,

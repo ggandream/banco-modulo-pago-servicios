@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "banco-app.fullname" . }}-frontend
+  labels:
+    {{- include "banco-app.labels" . | nindent 4 }}
+    {{- include "banco-app.selectorLabels.frontend" . | nindent 4 }}
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.frontend.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "banco-app.selectorLabels.frontend" . | nindent 4 }}

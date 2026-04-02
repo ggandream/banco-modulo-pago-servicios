@@ -1,10 +1,9 @@
 import { IconAccessible, IconChevronRight, IconLogout } from '@tabler/icons-react';
-import { Title, Tooltip, Text, Divider, Group, UnstyledButton } from '@mantine/core';
+import { Title, Tooltip, Text, Divider, UnstyledButton } from '@mantine/core';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import styles from './styles.module.css';
 import { DASHBOARD_ROUTES } from '@/app/config/routes.constants';
 import { NAVIGATION_MODULES } from '@/app/config/navigation.config';
-import { Logo } from '@/shared/components/ui/Logo/index';
 import { AccessibilityDrawer, useAccessibility } from '@/features/accessibility';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 

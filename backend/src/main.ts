@@ -17,7 +17,10 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173', // Vite dev server
+      'http://localhost:8080', // Docker (Nginx)
+    ],
     credentials: true,
   });
 

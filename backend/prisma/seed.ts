@@ -1,8 +1,8 @@
 // import { PrismaClient } from '../generated/prisma';
 import * as bcrypt from 'bcrypt';
-import "dotenv/config";
-import { PrismaClient } from "generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import 'dotenv/config';
+import { PrismaClient } from '../generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
@@ -52,23 +52,43 @@ async function main() {
   // EMPRESAS DE SERVICIO
   // ──────────────────────────────────────────────────────────────────────────
   const empresas = [
-    { nombre: 'Energuate de Occidente', tipoServicioId: tipoElectricidad.id, tarifaMensual: 150.0 },
-    { nombre: 'Energuate de Oriente', tipoServicioId: tipoElectricidad.id, tarifaMensual: 175.0 },
-    { nombre: 'Empresa Electrica de Guatemala', tipoServicioId: tipoElectricidad.id, tarifaMensual: 200.0 },
+    {
+      nombre: 'Energuate de Occidente',
+      tipoServicioId: tipoElectricidad.id,
+      tarifaMensual: 150.0,
+    },
+    {
+      nombre: 'Energuate de Oriente',
+      tipoServicioId: tipoElectricidad.id,
+      tarifaMensual: 175.0,
+    },
+    {
+      nombre: 'Empresa Electrica de Guatemala',
+      tipoServicioId: tipoElectricidad.id,
+      tarifaMensual: 200.0,
+    },
     { nombre: 'Empagua', tipoServicioId: tipoAgua.id, tarifaMensual: 80.0 },
-    { nombre: 'Agua de Oriente', tipoServicioId: tipoAgua.id, tarifaMensual: 65.0 },
-    { nombre: 'Agua de Occidente', tipoServicioId: tipoAgua.id, tarifaMensual: 70.0 },
+    {
+      nombre: 'Agua de Oriente',
+      tipoServicioId: tipoAgua.id,
+      tarifaMensual: 65.0,
+    },
+    {
+      nombre: 'Agua de Occidente',
+      tipoServicioId: tipoAgua.id,
+      tarifaMensual: 70.0,
+    },
   ];
 
   const empresasCreadas: Record<string, { id: number }> = {};
   for (const emp of empresas) {
-    const created = await prisma.empresaServicio.upsert({
-      where: { id: 0 }, // force create
-      update: {},
-      create: emp,
-    }).catch(() =>
-      prisma.empresaServicio.create({ data: emp }),
-    );
+    const created = await prisma.empresaServicio
+      .upsert({
+        where: { id: 0 }, // force create
+        update: {},
+        create: emp,
+      })
+      .catch(() => prisma.empresaServicio.create({ data: emp }));
     empresasCreadas[emp.nombre] = created;
   }
 
@@ -84,16 +104,18 @@ async function main() {
   // TARIFAS DE SERVICIO
   // ──────────────────────────────────────────────────────────────────────────
   for (const emp of allEmpresas) {
-    await prisma.tarifasServicio.create({
-      data: {
-        empresaId: emp.id,
-        montoMensual: emp.tarifaMensual,
-        fechaInicioVigencia: new Date('2026-01-01'),
-        estado: true,
-      },
-    }).catch(() => {
-      // Already exists
-    });
+    await prisma.tarifasServicio
+      .create({
+        data: {
+          empresaId: emp.id,
+          montoMensual: emp.tarifaMensual,
+          fechaInicioVigencia: new Date('2026-01-01'),
+          estado: true,
+        },
+      })
+      .catch(() => {
+        // Already exists
+      });
   }
 
   console.log('Tarifas creadas');
@@ -103,7 +125,7 @@ async function main() {
   // ──────────────────────────────────────────────────────────────────────────
   const salt = await bcrypt.genSalt(10);
 
-  const admin = await prisma.usuario.upsert({
+  await prisma.usuario.upsert({
     where: { nombreUsuario: 'admin' },
     update: {},
     create: {
@@ -139,7 +161,7 @@ async function main() {
     },
   });
 
-  const empresaUser = await prisma.usuario.upsert({
+  await prisma.usuario.upsert({
     where: { nombreUsuario: 'energuate.admin' },
     update: {},
     create: {
@@ -194,16 +216,40 @@ async function main() {
   // ──────────────────────────────────────────────────────────────────────────
   // CONTADORES DE SERVICIO
   // ──────────────────────────────────────────────────────────────────────────
-  const energuateOcc = allEmpresas.find((e) => e.nombre === 'Energuate de Occidente')!;
+  const energuateOcc = allEmpresas.find(
+    (e) => e.nombre === 'Energuate de Occidente',
+  )!;
   const empagua = allEmpresas.find((e) => e.nombre === 'Empagua')!;
-  const energuateOri = allEmpresas.find((e) => e.nombre === 'Energuate de Oriente')!;
+  const energuateOri = allEmpresas.find(
+    (e) => e.nombre === 'Energuate de Oriente',
+  )!;
 
   const contadores = [
-    { numeroContador: 'CTR-E-001', empresaId: energuateOcc.id, alias: 'Casa Juan - Electricidad' },
-    { numeroContador: 'CTR-E-002', empresaId: energuateOri.id, alias: 'Casa Maria - Electricidad' },
-    { numeroContador: 'CTR-A-001', empresaId: empagua.id, alias: 'Casa Juan - Agua' },
-    { numeroContador: 'CTR-A-002', empresaId: empagua.id, alias: 'Casa Maria - Agua' },
-    { numeroContador: 'CTR-E-003', empresaId: energuateOcc.id, alias: 'Oficina Central' },
+    {
+      numeroContador: 'CTR-E-001',
+      empresaId: energuateOcc.id,
+      alias: 'Casa Juan - Electricidad',
+    },
+    {
+      numeroContador: 'CTR-E-002',
+      empresaId: energuateOri.id,
+      alias: 'Casa Maria - Electricidad',
+    },
+    {
+      numeroContador: 'CTR-A-001',
+      empresaId: empagua.id,
+      alias: 'Casa Juan - Agua',
+    },
+    {
+      numeroContador: 'CTR-A-002',
+      empresaId: empagua.id,
+      alias: 'Casa Maria - Agua',
+    },
+    {
+      numeroContador: 'CTR-E-003',
+      empresaId: energuateOcc.id,
+      alias: 'Oficina Central',
+    },
   ];
 
   for (const cnt of contadores) {

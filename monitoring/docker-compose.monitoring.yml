@@ -1,0 +1,114 @@
+# =============================================================================
+# Monitoring & Security Stack
+# =============================================================================
+# Run with: docker compose -f docker-compose.yml -f monitoring/docker-compose.monitoring.yml up -d
+#
+# This extends the main docker-compose.yml and adds:
+#   - Prometheus (metrics)
+#   - Grafana (dashboards)
+#   - Loki (log aggregation)
+#   - Promtail (log collector)
+#   - SonarQube (code quality)
+
+services:
+
+  # ===========================================================================
+  # Prometheus - Metrics collection
+  # ===========================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+    networks:
+      - banco-network
+
+  # ===========================================================================
+  # Grafana - Dashboards and visualization
+  # ===========================================================================
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - banco-network
+
+  # ===========================================================================
+  # Loki - Log aggregation
+  # ===========================================================================
+  loki:
+    image: grafana/loki:latest
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - banco-network
+
+  # ===========================================================================
+  # Promtail - Log collector (sends Docker logs to Loki)
+  # ===========================================================================
+  promtail:
+    image: grafana/promtail:latest
+    restart: unless-stopped
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/var/log:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - banco-network
+
+  # ===========================================================================
+  # SonarQube CE - Code quality and security analysis
+  # ===========================================================================
+  sonarqube:
+    image: sonarqube:community
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - banco-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
+networks:
+  banco-network:
+    external: true
+    name: banco-modulo-pago-servicios_banco-network

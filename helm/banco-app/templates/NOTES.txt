@@ -1,0 +1,35 @@
+=====================================================================
+  Banco - Módulo de Pago de Servicios deployed!
+=====================================================================
+
+{{- if .Values.ingress.enabled }}
+
+The application is available at:
+
+  Frontend:  http://{{ .Values.ingress.host }}
+  API:       http://{{ .Values.ingress.host }}/api
+
+Make sure to add this to /etc/hosts:
+
+  $(minikube ip)  {{ .Values.ingress.host }}
+
+{{- else }}
+
+Access the services via NodePort:
+
+  Frontend:  kubectl port-forward svc/{{ include "banco-app.fullname" . }}-frontend 8080:80
+  Backend:   kubectl port-forward svc/{{ include "banco-app.fullname" . }}-backend 3000:3000
+
+{{- end }}
+
+To check pod status:
+
+  kubectl get pods -l app.kubernetes.io/part-of={{ include "banco-app.name" . }}
+
+To seed the database (first time):
+
+  kubectl set env deployment/{{ include "banco-app.fullname" . }}-backend RUN_SEED=true
+  kubectl rollout restart deployment/{{ include "banco-app.fullname" . }}-backend
+
+  (Then set it back to false after the pod restarts)
+  kubectl set env deployment/{{ include "banco-app.fullname" . }}-backend RUN_SEED=false
