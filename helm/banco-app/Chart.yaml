@@ -1,0 +1,11 @@
+apiVersion: v2
+name: banco-app
+description: Helm chart for Banco - Módulo de Pago de Servicios (MVP)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - banco
+  - pagos
+  - nestjs
+  - react

@@ -1,4 +1,4 @@
-import { Badge, Table, Text, Group, ActionIcon, Tooltip, Loader, Center } from '@mantine/core';
+import { Badge, Table, Text, ActionIcon, Tooltip, Loader, Center } from '@mantine/core';
 import { IconEye } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/shared/components/ui/PageHeader';

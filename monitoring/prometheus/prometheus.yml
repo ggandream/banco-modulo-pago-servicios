@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert-rules.yml"
+
+scrape_configs:
+  # -------------------------------------------------------------------------
+  # Backend NestJS metrics
+  # -------------------------------------------------------------------------
+  - job_name: "backend"
+    metrics_path: /api/metrics
+    static_configs:
+      - targets: ["backend:3000"]
+        labels:
+          service: "banco-backend"
+
+  # -------------------------------------------------------------------------
+  # Prometheus self-monitoring
+  # -------------------------------------------------------------------------
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]

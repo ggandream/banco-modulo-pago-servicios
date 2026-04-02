@@ -1,0 +1,69 @@
+# =============================================================================
+# Banco App - Helm Values
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# PostgreSQL
+# ---------------------------------------------------------------------------
+postgres:
+  image: postgres:16-alpine
+  replicas: 1
+  port: 5432
+  credentials:
+    user: root
+    password: root
+    database: mydb
+  storage:
+    size: 1Gi
+    className: standard
+
+# ---------------------------------------------------------------------------
+# Backend (NestJS + Prisma)
+# ---------------------------------------------------------------------------
+backend:
+  image:
+    repository: banco-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 2
+  port: 3000
+  jwtSecret: banco_modulo_secret_2026
+  runSeed: "false"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilization: 70
+
+# ---------------------------------------------------------------------------
+# Frontend (React + Nginx)
+# ---------------------------------------------------------------------------
+frontend:
+  image:
+    repository: banco-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 1
+  port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ---------------------------------------------------------------------------
+# Ingress
+# ---------------------------------------------------------------------------
+ingress:
+  enabled: true
+  className: nginx
+  host: banco.local
