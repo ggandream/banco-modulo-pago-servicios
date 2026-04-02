@@ -73,6 +73,7 @@ JWT_SECRET="banco_modulo_secret_2026"
 
 ```bash
 cd backend
+npx prisma generate
 npx prisma migrate dev --name init
 npx prisma db seed
 ```
