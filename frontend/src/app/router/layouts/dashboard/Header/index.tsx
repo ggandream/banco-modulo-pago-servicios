@@ -14,8 +14,11 @@ import { IconBell, IconSettings, IconUser, IconLogout, IconChevronDown } from '@
 import styles from './styles.module.css';
 import { SearchControl } from '@/shared/components/ui/SearchControl';
 import { Logo } from '@/shared/components/ui/Logo';
+import { useAuthStore } from '@/features/auth/stores/auth.store';
 
 export default function DashboardHeader() {
+  const user = useAuthStore((state) => state.user);
+
   return (
     <Group h='100%' px='md' className={styles.header}>
       <Group justify='center' pb={'md'} pt={'xs'} visibleFrom='sm'>
@@ -69,7 +72,7 @@ export default function DashboardHeader() {
                 </Avatar>
                 <div className={styles.userInfo}>
                   <Text size='sm' fw={500} lh={1.2}>
-                    Jhon Doe
+                    {user?.fullName || 'Usuario'}
                   </Text>
                   <Text size='xs' c='dimmed' lh={1.2}>
                     Cliente

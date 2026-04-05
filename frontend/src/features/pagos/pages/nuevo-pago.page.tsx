@@ -29,7 +29,7 @@ import {
   useDeuda,
   useCrearPago,
 } from '../api/pagos.api';
-import type { EmpresaServicio, MesPendiente } from '../types/pagos.types';
+import type { EmpresaServicio, MesPendiente, CreatePagoResult } from '../types/pagos.types';
 import { useNavigate } from 'react-router-dom';
 
 const MESES = [
@@ -46,7 +46,7 @@ export default function NuevoPagoPage() {
   const [contadorConfirmado, setContadorConfirmado] = useState(false);
   const [cuentaId, setCuentaId] = useState<string | null>(null);
   const [mesesSeleccionados, setMesesSeleccionados] = useState<MesPendiente[]>([]);
-  const [pagoExitoso, setPagoExitoso] = useState<any>(null);
+  const [pagoExitoso, setPagoExitoso] = useState<CreatePagoResult | null>(null);
 
   const { data: tipos, isLoading: loadingTipos } = useTiposServicio();
   const { data: empresas, isLoading: loadingEmpresas } = useEmpresas(tipoServicioId);
@@ -105,10 +105,11 @@ export default function NuevoPagoPage() {
       });
       setPagoExitoso(resultado);
       setStep(4);
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ocurrio un error';
       notifications.show({
         title: 'Error al procesar el pago',
-        message: error?.message || 'Ocurrio un error',
+        message,
         color: 'red',
       });
     }
@@ -359,7 +360,7 @@ export default function NuevoPagoPage() {
                   <Text c="dimmed">Saldo restante:</Text>
                   <Text fw={500}>Q{pagoExitoso?.saldoRestante?.toFixed(2)}</Text>
                 </Group>
-                {pagoExitoso?.pagos?.map((p: any, i: number) => (
+                {pagoExitoso?.pagos?.map((p, i) => (
                   <Group key={i} justify="space-between">
                     <Text size="sm">Comprobante {i + 1}:</Text>
                     <Badge variant="light">{p.comprobante?.numeroComprobante}</Badge>

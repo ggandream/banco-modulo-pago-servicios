@@ -10,6 +10,11 @@ const MESES = [
   'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
 ];
 
+interface Empresa {
+  id: number;
+  nombre: string;
+}
+
 interface PagoEmpresa {
   id: number;
   numeroContador: string;
@@ -29,7 +34,7 @@ export default function PagosEmpresaPage() {
   // Obtener empresas para encontrar la del usuario empresa
   const { data: empresas } = useQuery({
     queryKey: ['empresas-all'],
-    queryFn: () => httpClient.get<any[]>('/servicios/empresas'),
+    queryFn: () => httpClient.get<Empresa[]>('/servicios/empresas'),
   });
 
   const selectedEmpresaId = empresaId || empresas?.[0]?.id;
@@ -49,7 +54,7 @@ export default function PagosEmpresaPage() {
 
       {empresas && empresas.length > 1 && (
         <Group mt="md" gap="xs">
-          {empresas.map((emp: any) => (
+          {empresas.map((emp) => (
             <Button
               key={emp.id}
               variant={selectedEmpresaId === emp.id ? 'filled' : 'light'}
