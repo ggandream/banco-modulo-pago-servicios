@@ -21,7 +21,7 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('me')
-  async getMe(@Req() req: any) {
+  async getMe(@Req() req: { user: { id: number; role: string } }) {
     return this.usersService.findOne(req.user.id);
   }
 
@@ -31,7 +31,7 @@ export class UsersController {
   }
 
   @Get()
-  async findAll(@Req() req: any) {
+  async findAll(@Req() req: { user: { id: number; role: string } }) {
     if (req.user.role !== 'administrador') {
       throw new ForbiddenException('Solo administradores');
     }
@@ -44,7 +44,10 @@ export class UsersController {
   }
 
   @Post()
-  async create(@Req() req: any, @Body() dto: CreateUserDto) {
+  async create(
+    @Req() req: { user: { id: number; role: string } },
+    @Body() dto: CreateUserDto,
+  ) {
     if (req.user.role !== 'administrador') {
       throw new ForbiddenException('Solo administradores');
     }
@@ -52,7 +55,11 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async update(@Req() req: any, @Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+  async update(
+    @Req() req: { user: { id: number; role: string } },
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateUserDto,
+  ) {
     if (req.user.role !== 'administrador') {
       throw new ForbiddenException('Solo administradores');
     }
@@ -60,7 +67,10 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async remove(@Req() req: any, @Param('id', ParseIntPipe) id: number) {
+  async remove(
+    @Req() req: { user: { id: number; role: string } },
+    @Param('id', ParseIntPipe) id: number,
+  ) {
     if (req.user.role !== 'administrador') {
       throw new ForbiddenException('Solo administradores');
     }
