@@ -30,10 +30,11 @@ export function LoginForm() {
       });
       login(response.accessToken, response.user);
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Credenciales invalidas';
       notifications.show({
         title: 'Error',
-        message: error?.message || 'Credenciales invalidas',
+        message,
         color: 'red',
       });
     } finally {

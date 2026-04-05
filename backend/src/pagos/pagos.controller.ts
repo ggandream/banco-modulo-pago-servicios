@@ -27,17 +27,29 @@ export class PagosController {
   }
 
   @Post()
-  async crearPago(@Req() req: any, @Body() dto: CreatePagoDto) {
+  async crearPago(
+    @Req() req: { user: { id: number } },
+    @Body() dto: CreatePagoDto,
+  ) {
     return this.pagosService.crearPago(req.user.id, dto);
   }
 
   @Get('historial')
-  async getHistorial(@Req() req: any, @Query('empresaId') empresaId?: string) {
-    return this.pagosService.getHistorial(req.user.id, empresaId ? +empresaId : undefined);
+  async getHistorial(
+    @Req() req: { user: { id: number } },
+    @Query('empresaId') empresaId?: string,
+  ) {
+    return this.pagosService.getHistorial(
+      req.user.id,
+      empresaId ? +empresaId : undefined,
+    );
   }
 
   @Get('comprobante/:pagoId')
-  async getComprobante(@Req() req: any, @Param('pagoId', ParseIntPipe) pagoId: number) {
+  async getComprobante(
+    @Req() req: { user: { id: number } },
+    @Param('pagoId', ParseIntPipe) pagoId: number,
+  ) {
     return this.pagosService.getComprobante(pagoId, req.user.id);
   }
 
@@ -50,7 +62,7 @@ export class PagosController {
   }
 
   @Get('stats/usuario')
-  async getStatsUsuario(@Req() req: any) {
+  async getStatsUsuario(@Req() req: { user: { id: number } }) {
     return this.pagosService.getStatsUsuario(req.user.id);
   }
 

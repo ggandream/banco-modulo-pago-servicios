@@ -82,7 +82,7 @@ export default function ComprobantePage() {
           </Group>
           <Group justify="space-between">
             <Text c="dimmed">Cliente:</Text>
-            <Text>{(pago as any).usuario?.nombreCompleto}</Text>
+            <Text>{pago.usuario?.nombreCompleto}</Text>
           </Group>
 
           <Divider my="xs" />

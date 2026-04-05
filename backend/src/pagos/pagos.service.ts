@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import {
   BadRequestException,
   ForbiddenException,
@@ -82,7 +81,6 @@ export class PagosService {
   }
 
   async crearPago(usuarioId: number, dto: CreatePagoDto) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const paymentTimer = this.metrics.paymentDuration.startTimer();
 
     // Verificar que la cuenta pertenece al usuario

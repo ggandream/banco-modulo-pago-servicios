@@ -35,6 +35,22 @@ interface Rol {
   nombre: string;
 }
 
+interface CrearUsuarioPayload {
+  nombreCompleto: string;
+  nombreUsuario: string;
+  correo: string;
+  password: string;
+  rolId: number;
+}
+
+interface ActualizarUsuarioPayload {
+  nombreCompleto: string;
+  nombreUsuario: string;
+  correo: string;
+  rolId: number;
+  password?: string;
+}
+
 export default function UsuariosPage() {
   const queryClient = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,25 +74,25 @@ export default function UsuariosPage() {
   });
 
   const crearUsuario = useMutation({
-    mutationFn: (data: any) => httpClient.post('/users', data),
+    mutationFn: (data: CrearUsuarioPayload) => httpClient.post('/users', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });
       cerrarModal();
       notifications.show({ title: 'Exito', message: 'Usuario creado', color: 'green' });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       notifications.show({ title: 'Error', message: err?.message || 'Error al crear usuario', color: 'red' });
     },
   });
 
   const actualizarUsuario = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => httpClient.patch(`/users/${id}`, data),
+    mutationFn: ({ id, data }: { id: number; data: ActualizarUsuarioPayload }) => httpClient.patch(`/users/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });
       cerrarModal();
       notifications.show({ title: 'Exito', message: 'Usuario actualizado', color: 'green' });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       notifications.show({ title: 'Error', message: err?.message || 'Error al actualizar', color: 'red' });
     },
   });
@@ -116,7 +132,7 @@ export default function UsuariosPage() {
 
   const handleSubmit = () => {
     if (editando) {
-      const data: any = { nombreCompleto, nombreUsuario, correo, rolId: Number(rolId) };
+      const data: ActualizarUsuarioPayload = { nombreCompleto, nombreUsuario, correo, rolId: Number(rolId) };
       if (password) data.password = password;
       actualizarUsuario.mutate({ id: editando.id, data });
     } else {

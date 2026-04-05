@@ -62,11 +62,20 @@ export interface PagoResponse {
     numeroCuenta: string;
     tipoCuenta: string;
   };
+  usuario?: {
+    nombreCompleto: string;
+  };
+}
+
+export interface PagoResultItem {
+  comprobante?: {
+    numeroComprobante: string;
+  };
 }
 
 export interface CreatePagoResult {
   mensaje: string;
-  pagos: any[];
+  pagos: PagoResultItem[];
   montoTotal: number;
   saldoRestante: number;
 }

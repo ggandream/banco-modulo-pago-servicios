@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ServiciosService } from './servicios.service';
 
@@ -14,7 +23,9 @@ export class ServiciosController {
 
   @Get('empresas')
   async getEmpresas(@Query('tipoServicioId') tipoServicioId?: string) {
-    return this.serviciosService.getEmpresas(tipoServicioId ? +tipoServicioId : undefined);
+    return this.serviciosService.getEmpresas(
+      tipoServicioId ? +tipoServicioId : undefined,
+    );
   }
 
   @Get('empresas/:id')

@@ -107,6 +107,10 @@ cd banco-modulo-pago-servicios
 ```bash
 RUN_SEED=true docker compose up --build
 ```
+En windows (PowerShell):
+```bash
+$env:RUN_SEED="true"; docker compose up -d --build
+```
 
 **Siguientes veces:**
 
