@@ -68,6 +68,11 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.0"
   },
+  "pnpm": {
+    "overrides": {
+      "handlebars": ">=4.7.9"
+    }
+  },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
