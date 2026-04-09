@@ -370,7 +370,7 @@ Minikube tiene su propio Docker daemon. Necesitamos construir las imagenes ahi p
 # Apuntar Docker al daemon de Minikube
 eval $(minikube docker-env)
 
-# Apuntar Docker al daemon de Minikube (version PowerShell)
+# Apuntar Docker al daemon de Minikube (solo para PowerShell)
 minikube docker-env | Invoke-Expression
 
 # Construir las imagenes (desde la raiz del proyecto)
@@ -380,7 +380,7 @@ docker build -t banco-frontend:latest ./frontend
 # Verificar que las imagenes existen
 docker images | grep banco
 
-# Verificar que las imagenes existen (version PowerShell)
+# Verificar que las imagenes existen (solo para PowerShell)
 docker images | Select-String "banco"
 ```
 
@@ -395,6 +395,9 @@ helm install banco ./helm/banco-app
 # Ver el estado del despliegue
 kubectl get pods -w
 # Esperar a que todos los pods esten en STATUS: Running
+
+# Comando alterno para revisar:
+kubectl get pods -l app.kubernetes.io/part-of=banco-app
 ```
 
 ### 3.7 Seed de la base de datos (primera vez)
