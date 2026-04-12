@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { ServiciosService } from './servicios.service';
 
 describe('ServiciosService', () => {
@@ -7,7 +11,11 @@ describe('ServiciosService', () => {
   beforeEach(() => {
     prisma = {
       tipoServicio: { findMany: jest.fn() },
-      empresaServicio: { findMany: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+      empresaServicio: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+      },
       tarifasServicio: { updateMany: jest.fn(), create: jest.fn() },
     };
     service = new ServiciosService(prisma);
@@ -75,7 +83,10 @@ describe('ServiciosService', () => {
   it('should update tariff: deactivate old, create new, update company', async () => {
     prisma.tarifasServicio.updateMany.mockResolvedValue({ count: 1 });
     prisma.tarifasServicio.create.mockResolvedValue({ id: 1 });
-    prisma.empresaServicio.update.mockResolvedValue({ id: 5, tarifaMensual: 150 });
+    prisma.empresaServicio.update.mockResolvedValue({
+      id: 5,
+      tarifaMensual: 150,
+    });
 
     const result = await service.updateTarifa(5, 150);
 

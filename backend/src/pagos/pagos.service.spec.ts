@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   NotFoundException,
   ForbiddenException,
@@ -62,7 +65,9 @@ describe('PagosService', () => {
         (m: any) => m.mes === 1 && m.anio === 2026,
       );
       expect(hasJan2026).toBe(false);
-      expect(result.montoTotal).toBe(result.tarifaMensual * result.mesesPendientes.length);
+      expect(result.montoTotal).toBe(
+        result.tarifaMensual * result.mesesPendientes.length,
+      );
     });
   });
 
@@ -178,7 +183,7 @@ describe('PagosService', () => {
         { saldo: 300 },
       ]);
       prisma.pago.count
-        .mockResolvedValueOnce(3)  // pagosDelMes
+        .mockResolvedValueOnce(3) // pagosDelMes
         .mockResolvedValueOnce(10); // totalPagos
 
       const result = await service.getStatsUsuario(1);
