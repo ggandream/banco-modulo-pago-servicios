@@ -56,7 +56,7 @@ spec:
                   key: RUN_SEED
           livenessProbe:
             httpGet:
-              path: /api
+              path: /api/metrics
               port: http
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -64,7 +64,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /api
+              path: /api/metrics
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5

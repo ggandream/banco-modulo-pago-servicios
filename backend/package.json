@@ -13,7 +13,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test":  "jest --passWithNoTests",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -53,6 +53,7 @@
     "@types/supertest": "7.2.0",
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-jest": "^29.15.2",
     "eslint-plugin-prettier": "5.5.5",
     "globals": "16.5.0",
     "jest": "30.3.0",
@@ -67,6 +68,11 @@
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "handlebars": "4.7.9"
+    }
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -86,6 +92,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^generated/prisma/client$": "<rootDir>/__mocks__/prisma-client.ts"
+    }
   }
 }
