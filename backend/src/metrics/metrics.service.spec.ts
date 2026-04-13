@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { MetricsService } from './metrics.service';
 
 describe('MetricsService', () => {
@@ -44,9 +45,7 @@ describe('MetricsService', () => {
 
   it('should increment payment total counter', () => {
     const inc = jest.fn();
-    jest
-      .spyOn(service.paymentTotal, 'labels')
-      .mockReturnValue({ inc } as any);
+    jest.spyOn(service.paymentTotal, 'labels').mockReturnValue({ inc } as any);
 
     service.paymentTotal.labels('success').inc(1);
 
