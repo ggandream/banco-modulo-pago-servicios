@@ -56,26 +56,30 @@ function DashboardCuentahabiente() {
         />
       </SimpleGrid>
 
-      <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+      <Stack mt="xl" gap="md">
         <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Stack>
-            <Text fw={600}>Pagar un servicio</Text>
-            <Text size="sm" c="dimmed">Paga tus servicios de electricidad y agua potable</Text>
+          <Group justify="space-between" align="center">
+            <div>
+              <Text fw={600}>Pagar un servicio</Text>
+              <Text size="sm" c="dimmed">Paga tus servicios de electricidad y agua potable</Text>
+            </div>
             <Button rightSection={<IconArrowRight size={16} />} onClick={() => navigate('/dashboard/pagos/nuevo')}>
               Ir a pagar
             </Button>
-          </Stack>
+          </Group>
         </Card>
         <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Stack>
-            <Text fw={600}>Ver historial</Text>
-            <Text size="sm" c="dimmed">Consulta todos tus pagos y comprobantes</Text>
+          <Group justify="space-between" align="center">
+            <div>
+              <Text fw={600}>Ver historial</Text>
+              <Text size="sm" c="dimmed">Consulta todos tus pagos y comprobantes</Text>
+            </div>
             <Button variant="light" rightSection={<IconArrowRight size={16} />} onClick={() => navigate('/dashboard/pagos/historial')}>
               Ver historial
             </Button>
-          </Stack>
+          </Group>
         </Card>
-      </SimpleGrid>
+      </Stack>
     </>
   );
 }
